@@ -96,7 +96,7 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
       break;
 
     case GET_MANY: {
-      const query = JSON.stringify( params.ids );
+      const query = JSON.stringify(params.ids);
       url = `${apiUrl}/${resource}?filter[id]=${query}`;
       break;
     }
@@ -128,23 +128,9 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
 
   return axios({ url, ...options })
     .then((response) => {
-
       switch (type) {
         case GET_MANY:
-        case GET_LIST: {
-          return {
-            data: response.data.data.map(value => {
-
-                Object.assign(
-                  { id: value.id },
-                  value.attributes,
-                )
-
-            }),
-            total: response.data.meta[settings.total],
-          };
-        }
-
+        case GET_LIST:
         case GET_MANY_REFERENCE: {
           return {
             data: response.data.data.map(value => Object.assign(

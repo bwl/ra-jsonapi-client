@@ -155,20 +155,9 @@ exports.default = function (apiUrl) {
     }
 
     return (0, _axios2.default)(_extends({ url: url }, options)).then(function (response) {
-
       switch (type) {
         case _actions.GET_MANY:
         case _actions.GET_LIST:
-          {
-            return {
-              data: response.data.data.map(function (value) {
-
-                Object.assign({ id: value.id }, value.attributes);
-              }),
-              total: response.data.meta[settings.total]
-            };
-          }
-
         case _actions.GET_MANY_REFERENCE:
           {
             return {
