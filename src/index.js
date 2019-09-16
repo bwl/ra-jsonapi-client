@@ -96,8 +96,14 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
       break;
 
     case GET_MANY: {
+      let idStr = '';
+
+      params.ids.forEach((id) => {
+        idStr += `${id},`;
+      });
+
       const query = {
-        filter: JSON.stringify({ id: params.ids }),
+        'filter[id]': idStr,
       };
       url = `${apiUrl}/${resource}?${stringify(query)}`;
       break;
@@ -128,12 +134,14 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
       throw new NotImplementedError(`Unsupported Data Provider request type ${type}`);
   }
 
+  console.log(type, decodeURIComponent(url));
+
   return axios({ url, ...options })
     .then((response) => {
       switch (type) {
+        case GET_MANY_REFERENCE:
         case GET_MANY:
-        case GET_LIST:
-        case GET_MANY_REFERENCE: {
+        case GET_LIST: {
           return {
             data: response.data.data.map(value => Object.assign(
               { id: value.id },

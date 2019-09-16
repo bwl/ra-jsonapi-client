@@ -120,8 +120,14 @@ exports.default = function (apiUrl) {
 
       case _actions.GET_MANY:
         {
+          var idStr = '';
+
+          params.ids.forEach(function (id) {
+            idStr += id + ',';
+          });
+
           var _query = {
-            filter: JSON.stringify({ id: params.ids })
+            'filter[id]': idStr
           };
           url = apiUrl + '/' + resource + '?' + (0, _qs.stringify)(_query);
           break;
@@ -156,11 +162,13 @@ exports.default = function (apiUrl) {
         throw new _errors.NotImplementedError('Unsupported Data Provider request type ' + type);
     }
 
+    console.log(type, decodeURIComponent(url));
+
     return (0, _axios2.default)(_extends({ url: url }, options)).then(function (response) {
       switch (type) {
+        case _actions.GET_MANY_REFERENCE:
         case _actions.GET_MANY:
         case _actions.GET_LIST:
-        case _actions.GET_MANY_REFERENCE:
           {
             return {
               data: response.data.data.map(function (value) {
