@@ -55,6 +55,16 @@ exports.default = function (apiUrl) {
       headers: settings.headers
     };
 
+    function filterObj(keys, obj) {
+      var newObj = {};
+      Object.keys(obj).forEach(function (key) {
+        if (!keys.includes(key)) {
+          newObj[key] = obj[key];
+        }
+      });
+      return newObj;
+    }
+
     switch (type) {
       case _actions.GET_LIST:
         {
@@ -104,7 +114,7 @@ exports.default = function (apiUrl) {
             data: {
               id: params.id,
               type: resource,
-              attributes: params.data
+              attributes: filterObj('id', params.data)
             }
           };
 
@@ -162,7 +172,7 @@ exports.default = function (apiUrl) {
         throw new _errors.NotImplementedError('Unsupported Data Provider request type ' + type);
     }
 
-    console.log(type, decodeURIComponent(url));
+    console.log('SEND ' + type, decodeURIComponent(url));
 
     return (0, _axios2.default)(_extends({ url: url }, options)).then(function (response) {
       switch (type) {
