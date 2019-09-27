@@ -37,6 +37,16 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
     headers: settings.headers,
   };
 
+  function filterObj(keys, obj) {
+    const newObj = {};
+    Object.keys(obj).forEach((key) => {
+      if (!keys.includes(key)) {
+        newObj[key] = obj[key];
+      }
+    });
+    return newObj;
+  }
+
   switch (type) {
     case GET_LIST: {
       const { page, perPage } = params.pagination;
@@ -81,7 +91,7 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
         data: {
           id: params.id,
           type: resource,
-          attributes: params.data,
+          attributes: filterObj('id', params.data),
         },
       };
 
@@ -134,7 +144,7 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
       throw new NotImplementedError(`Unsupported Data Provider request type ${type}`);
   }
 
-  console.log(type, decodeURIComponent(url));
+  console.log(`SEND ${type}`, decodeURIComponent(url));
 
   return axios({ url, ...options })
     .then((response) => {
