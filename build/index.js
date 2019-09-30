@@ -130,15 +130,10 @@ exports.default = function (apiUrl) {
 
       case _actions.GET_MANY:
         {
-          var idStr = '';
-
-          params.ids.forEach(function (id) {
-            idStr += id + ',';
-          });
-
           var _query = {
-            'filter[id]': idStr
+            filter: { id: params.ids.join(',') }
           };
+
           url = apiUrl + '/' + resource + '?' + (0, _qs.stringify)(_query);
           break;
         }
@@ -231,6 +226,13 @@ exports.default = function (apiUrl) {
           {
             return {
               data: { id: params.id }
+            };
+          }
+
+        case DELETE_MANY:
+          {
+            return {
+              data: []
             };
           }
 

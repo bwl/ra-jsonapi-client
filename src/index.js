@@ -106,15 +106,10 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
       break;
 
     case GET_MANY: {
-      let idStr = '';
-
-      params.ids.forEach((id) => {
-        idStr += `${id},`;
-      });
-
       const query = {
-        'filter[id]': idStr,
+        filter: { id: params.ids.join(',') },
       };
+
       url = `${apiUrl}/${resource}?${stringify(query)}`;
       break;
     }
@@ -194,6 +189,12 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
         case DELETE: {
           return {
             data: { id: params.id },
+          };
+        }
+
+        case DELETE_MANY: {
+          return {
+            data: [],
           };
         }
 
