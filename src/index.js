@@ -13,6 +13,7 @@ import {
 
 import defaultSettings from './default-settings';
 import { NotImplementedError } from './errors';
+import ResourceLookup from './resourceLookup';
 import init from './initializer';
 
 // Set HTTP interceptors.
@@ -143,58 +144,27 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
 
   return axios({ url, ...options })
     .then((response) => {
+      const lookup = new ResourceLookup(response.data);
+
       switch (type) {
-        case GET_MANY_REFERENCE:
         case GET_MANY:
-        case GET_LIST: {
+        case GET_MANY_REFERENCE:
+        case GET_LIST:
           return {
-            data: response.data.data.map(value => Object.assign(
-              { id: value.id },
-              value.attributes,
-            )),
+            data: response.data.data.map(resource => lookup.unwrapData(resource)),
             total: response.data.meta[settings.total],
           };
-        }
 
-        case GET_ONE: {
-          const { id, attributes } = response.data.data;
-
+        case GET_ONE:
+        case CREATE:
+        case UPDATE:
           return {
-            data: {
-              id, ...attributes,
-            },
+            data: lookup.unwrapData(response.data.data),
           };
-        }
-
-        case CREATE: {
-          const { id, attributes } = response.data.data;
-
-          return {
-            data: {
-              id, ...attributes,
-            },
-          };
-        }
-
-        case UPDATE: {
-          const { id, attributes } = response.data.data;
-
-          return {
-            data: {
-              id, ...attributes,
-            },
-          };
-        }
 
         case DELETE: {
           return {
             data: { id: params.id },
-          };
-        }
-
-        case DELETE_MANY: {
-          return {
-            data: [],
           };
         }
 
