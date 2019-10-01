@@ -151,10 +151,9 @@ export default (apiUrl, userSettings = {}) => (type, resource, params) => {
         case GET_MANY_REFERENCE:
         case GET_LIST:
           return {
-            data: response.data.data.map(resource => lookup.unwrapData(resource)),
+            data: response.data.data.map(theResource => lookup.unwrapData(theResource)),
             total: response.data.meta[settings.total],
           };
-
         case GET_ONE:
         case CREATE:
         case UPDATE:
